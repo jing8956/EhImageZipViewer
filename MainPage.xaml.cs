@@ -14,9 +14,10 @@ public partial class MainPage : ContentPage
 #if !WINDOWS
         var pickResult = await FilePicker.PickAsync(pickOptions);
 #else
+        // var pickResult = await FilePicker.PickAsync(pickOptions);
         var pickResult = await CustomFilePicker.PickAsync();
 #endif
-        if(pickResult != null)
+        if (pickResult != null)
         {
             await Navigation.PushAsync(new GalleryViewPage(pickResult));
         }
