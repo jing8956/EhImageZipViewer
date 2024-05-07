@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="EhImageZipViewer.MainPage"
+             xmlns:strings="clr-namespace:EhImageZipViewer.Resources.Strings"
              Shell.NavBarIsVisible="false">
 
     <ScrollView>
@@ -21,15 +22,15 @@
                 SemanticProperties.Description="E H Image Zip Viewer"/>
 
             <Label
-                Text="Click the button to open a image zip file."
+                Text="{x:Static strings:AppResources.HomePage_SubHeadline}"
                 Style="{StaticResource SubHeadline}"
                 SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Click the button to open a image zip file" />
+                SemanticProperties.Description="{x:Static strings:AppResources.HomePage_SubHeadline}" />
 
             <Button
                 x:Name="CounterBtn"
-                Text="Open" 
-                SemanticProperties.Hint="Open an image zip file"
+                Text="{x:Static strings:AppResources.HomePage_OpenButton_Text}" 
+                SemanticProperties.Hint="{x:Static strings:AppResources.HomePage_OpenButton_Hint}"
                 Clicked="OnCounterClicked"
                 HorizontalOptions="Fill" />
         </VerticalStackLayout>

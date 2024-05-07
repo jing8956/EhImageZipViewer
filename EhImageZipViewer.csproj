@@ -46,6 +46,7 @@
         <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
         <DefaultLanguage>zh-CN</DefaultLanguage>
         <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+        <NeutralLanguage>zh-CN</NeutralLanguage>
     </PropertyGroup>
 
     <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows' and '$(RuntimeIdentifierOverride)' != ''">
@@ -84,6 +85,18 @@
       <Compile Update="GalleryViewPage.xaml.cs">
         <DependentUpon>GalleryViewPage.xaml</DependentUpon>
       </Compile>
+      <Compile Update="Resources\Strings\AppResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AppResources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Strings\AppResources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
     </ItemGroup>
 
     <ItemGroup>
