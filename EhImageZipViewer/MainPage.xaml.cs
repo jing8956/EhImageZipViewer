@@ -15,7 +15,7 @@ public partial class MainPage : ContentPage
         var pickResult = await FilePicker.PickAsync(pickOptions);
 #else
         // var pickResult = await FilePicker.PickAsync(pickOptions);
-        var pickResult = await CustomFilePicker.PickAsync();
+        var pickResult = await Win32FilePicker.PickAsync();
 #endif
         if (pickResult != null)
         {

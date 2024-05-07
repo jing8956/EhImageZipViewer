@@ -9,7 +9,7 @@ using Windows.Storage.AccessCache;
 
 namespace EhImageZipViewer;
 
-public static class CustomFilePicker
+public static class Win32FilePicker
 {
     public async static Task<FileResult?> PickAsync()
     {
