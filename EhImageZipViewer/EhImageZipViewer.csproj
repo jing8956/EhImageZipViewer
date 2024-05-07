@@ -82,13 +82,11 @@
     </ItemGroup>
 
     <ItemGroup>
+      <MauiXaml Update="GalleryViewPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </MauiXaml>
       <Compile Update="GalleryViewPage.xaml.cs">
         <DependentUpon>GalleryViewPage.xaml</DependentUpon>
-      </Compile>
-      <Compile Update="Resources\Strings\AppResources.Designer.cs">
-        <DesignTime>True</DesignTime>
-        <AutoGen>True</AutoGen>
-        <DependentUpon>AppResources.resx</DependentUpon>
       </Compile>
     </ItemGroup>
 
@@ -97,12 +95,11 @@
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
       </EmbeddedResource>
-    </ItemGroup>
-
-    <ItemGroup>
-      <MauiXaml Update="GalleryViewPage.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </MauiXaml>
+      <Compile Update="Resources\Strings\AppResources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AppResources.resx</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>
