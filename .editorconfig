@@ -1,6 +1,9 @@
 root = true
 
-[*.csproj]
+[*]
+charset = utf-8
+
+[*.{csproj,xml,yaml} ]
 indent_style = space
 indent_size = 2
 
@@ -36,7 +39,3 @@ dotnet_code_quality_unused_parameters = non_public
 
 # Namespace declarations should be file scoped.
 csharp_style_namespace_declarations = file_scoped:suggestion
-
-[*.yaml]
-indent_style = space
-indent_size = 2
