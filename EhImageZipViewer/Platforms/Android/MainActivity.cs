@@ -4,6 +4,8 @@ using Android.Content.Res;
 using AndroidX.Core.Content;
 using _Microsoft.Android.Resource.Designer;
 using Android.Views;
+using Android.OS;
+using AndroidX.Lifecycle;
 
 namespace EhImageZipViewer
 {
@@ -12,6 +14,15 @@ namespace EhImageZipViewer
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
     public class MainActivity : MauiAppCompatActivity
     {
+        public FilePickerLifecycleObserver FilePickerLifecycleObserver { get; private set; } = null!;
+
+        protected override void OnCreate(Bundle? savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+            FilePickerLifecycleObserver = new FilePickerLifecycleObserver(ActivityResultRegistry);
+            Lifecycle.AddObserver(FilePickerLifecycleObserver);
+        }
+
         public override void OnConfigurationChanged(Configuration newConfig)
         {
             base.OnConfigurationChanged(newConfig);

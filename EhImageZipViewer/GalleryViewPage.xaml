@@ -7,11 +7,10 @@
              Unloaded="ContentPage_Unloaded"
              Shell.NavBarIsVisible="false">
 
-    <CollectionView x:Name="MainView" ItemsUpdatingScrollMode="KeepScrollOffset"
-                    RemainingItemsThreshold="0" RemainingItemsThresholdReached="MainView_RemainingItemsThresholdReached">
+    <CollectionView x:Name="MainView" ItemsUpdatingScrollMode="KeepScrollOffset">
         <CollectionView.ItemTemplate>
             <DataTemplate x:DataType="local:GalleryPage">
-                <Image Source="{Binding ImageSource}"/>
+                <Image Source="{Binding ImageSource}" HorizontalOptions="Fill" />
             </DataTemplate>
         </CollectionView.ItemTemplate>
     </CollectionView>

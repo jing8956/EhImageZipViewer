@@ -1,4 +1,4 @@
-﻿using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 using Microsoft.Maui.Platform;
 using Windows.Storage;
 using Windows.ApplicationModel;
@@ -9,9 +9,9 @@ using Windows.Storage.AccessCache;
 
 namespace EhImageZipViewer;
 
-public static class Win32FilePicker
+public static class PlatformFilePicker
 {
-    public async static Task<FileResult?> PickAsync()
+    public async static Task<PlatformFileResult?> PickAsync()
     {
         var filePath = PickInternal();
         if (filePath == null) return null;
@@ -22,7 +22,7 @@ public static class Win32FilePicker
             StorageApplicationPermissions.FutureAccessList.Add(storageFile);
         }
 
-        return new FileResult(storageFile.Path, storageFile.ContentType);
+        return new Win32FileResult(storageFile.Path);
     }
 
     public unsafe static string? PickInternal()
@@ -75,9 +75,3 @@ public static class Win32FilePicker
         }
     }
 }
-
-public static class FileResultExtensions
-{
-    public static FileStream OpenRead(this FileResult fileResult) => new FileStream(fileResult.FullPath, FileMode.Open, FileAccess.Read);
-}
-

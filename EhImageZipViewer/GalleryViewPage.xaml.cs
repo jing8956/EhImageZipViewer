@@ -1,75 +1,91 @@
 using System.Collections.ObjectModel;
 using System.IO.Compression;
+using System.Text.RegularExpressions;
 
 namespace EhImageZipViewer;
 
 public partial class GalleryViewPage : ContentPage
 {
-	private readonly FileResult selectedFile;
-    public GalleryViewPage(FileResult selectedFile)
+    private const string _tempDirectoryName = "24ef1515-3b32-4671-9983-e0dc15c03781";
+    private readonly string _tempDirectory = Path.Combine(Path.GetTempPath(), _tempDirectoryName);
+    private readonly PlatformFileResult _selectedFile;
+
+    public GalleryViewPage(PlatformFileResult selectedFile)
 	{
 		InitializeComponent();
-        this.selectedFile = selectedFile;
+        _selectedFile = selectedFile;
     }
 
-    private int loadPosition;
-    private readonly ObservableCollection<GalleryPage> pages = [];
-    private async void ContentPage_Loaded(object sender, EventArgs e)
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
+    private readonly ObservableCollection<GalleryPage> _pages = [];
+    private Task _loadTask = null!;
+
+    private void ContentPage_Loaded(object sender, EventArgs e)
     {
-        await LoadPages(3);
-        MainView.ItemsSource = pages;
+        if(Directory.Exists(_tempDirectory))
+        {
+            Directory.Delete(_tempDirectory, true);
+        }
+
+        Directory.CreateDirectory(_tempDirectory);
+
+        _loadTask = LoadPages(_cancellationTokenSource.Token);
+        MainView.ItemsSource = _pages;
     }
-    private void ContentPage_Unloaded(object sender, EventArgs e)
+    private async void ContentPage_Unloaded(object sender, EventArgs e)
     {
-        pages.Clear();
-        GC.Collect();
+        try
+        {
+            await _cancellationTokenSource.CancelAsync();
+            await _loadTask;
+        }
+        catch (OperationCanceledException)
+        {
+
+        }
+
+        Directory.Delete(_tempDirectory, true);
+        _pages.Clear();
     }
 
-    private async Task LoadPages(int count)
+    private async Task LoadPages(CancellationToken cancellationToken)
     {
-#if !WINDOWS
-        using var selectedFileStream = await selectedFile.OpenReadAsync();
-#else
-        using var selectedFileStream = selectedFile.OpenRead();
-#endif
+        using var selectedFileStream = await _selectedFile.OpenReadAsync();
         using var selectedFileArchive = new ZipArchive(selectedFileStream, ZipArchiveMode.Read, true);
         var totalCount = selectedFileArchive.Entries.Count;
 
-        for (int i = 0; i < count; i++)
+        var entries = selectedFileArchive.Entries.OrderBy(e => ParsePageNumber(e.Name));
+        foreach (var entry in entries)
         {
-            if (loadPosition < totalCount)
-            {
-                var entry = selectedFileArchive.Entries[loadPosition++];
-                
-                using var entryStream = entry.Open();
-                using var memoryStream = new MemoryStream((int)entry.Length);
+            cancellationToken.ThrowIfCancellationRequested();
+            
+            using var entryStream = entry.Open();
+            var tempFilePath = Path.Combine(_tempDirectory, $"cache_{entry.FullName}");
+            using var fileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write,
+                FileShare.None, 4096, FileOptions.SequentialScan | FileOptions.Asynchronous);
 
-                await entryStream.CopyToAsync(memoryStream);
-                pages.Add(new GalleryPage(memoryStream.GetBuffer()));
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        selectedFileStream.Seek(0, SeekOrigin.Begin);
-    }
-
-    private readonly object isBusy = new();
-    private async void MainView_RemainingItemsThresholdReached(object sender, EventArgs e)
-    {
-        if(Monitor.TryEnter(isBusy))
-        {
-            await LoadPages(1);
-            Monitor.Exit(isBusy);
+            await entryStream.CopyToAsync(fileStream, cancellationToken);
+            await fileStream.FlushAsync(cancellationToken);
+            
+            _pages.Add(new GalleryPage(tempFilePath));
         }
     }
+
+    private static string ParsePageNumber(string name)
+        => PageNumberRegex().Replace(name, match => match.Value.PadLeft(4, '0'));
+
+    [GeneratedRegex(@"\d+")]
+    private static partial Regex PageNumberRegex();
 }
 
-public class GalleryPage(byte[] data)
+public class GalleryPage(string file)
 {
-    public ImageSource ImageSource => ImageSource.FromStream(GetStreamAsync);
+    public string File => file;
+    public ImageSource ImageSource => new CustomFileImageSource(file);
+}
 
-    public Task<Stream> GetStreamAsync(CancellationToken _) => Task.FromResult<Stream>(new MemoryStream(data));
+public class CustomFileImageSource(string file) : ImageSource, IFileImageSource
+{
+    public string File => file;
+    public override bool IsEmpty => false;
 }

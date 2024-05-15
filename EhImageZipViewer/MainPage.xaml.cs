@@ -1,4 +1,4 @@
-﻿using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls;
 
 namespace EhImageZipViewer;
 
@@ -11,15 +11,22 @@ public partial class MainPage : ContentPage
 
     private async void OnCounterClicked(object sender, EventArgs e)
     {
-#if !WINDOWS
-        var pickResult = await FilePicker.PickAsync(pickOptions);
+#if WINDOWS || ANDROID
+        var pickResult = await PlatformFilePicker.PickAsync();
 #else
-        // var pickResult = await FilePicker.PickAsync(pickOptions);
-        var pickResult = await Win32FilePicker.PickAsync();
+        var fileResult = await FilePicker.PickAsync(pickOptions);
+        var pickResult = new GenerateFileResult(fileResult);
 #endif
         if (pickResult != null)
         {
             await Navigation.PushAsync(new GalleryViewPage(pickResult));
+        }
+    }
+    private class GenerateFileResult(FileResult fileResult) : PlatformFileResult
+    {
+        public override async ValueTask<Stream> OpenReadAsync()
+        {
+            return await fileResult.OpenReadAsync();
         }
     }
 
