@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using System.IO.Compression;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace EhImageZipViewer;
@@ -17,7 +19,7 @@ public partial class GalleryViewPage : ContentPage
     }
 
     private readonly CancellationTokenSource _cancellationTokenSource = new();
-    private readonly ObservableCollection<GalleryPage> _pages = [];
+    private readonly ObservableCollection<ImageSource> _pages = [];
     private Task _loadTask = null!;
 
     private void ContentPage_Loaded(object sender, EventArgs e)
@@ -30,7 +32,7 @@ public partial class GalleryViewPage : ContentPage
         Directory.CreateDirectory(_tempDirectory);
 
         _loadTask = LoadPages(_cancellationTokenSource.Token);
-        MainView.ItemsSource = _pages;
+        MainView.Images = _pages;
     }
     private async void ContentPage_Unloaded(object sender, EventArgs e)
     {
@@ -50,24 +52,29 @@ public partial class GalleryViewPage : ContentPage
 
     private async Task LoadPages(CancellationToken cancellationToken)
     {
-        using var selectedFileStream = await _selectedFile.OpenReadAsync();
-        using var selectedFileArchive = new ZipArchive(selectedFileStream, ZipArchiveMode.Read, true);
-        var totalCount = selectedFileArchive.Entries.Count;
+        var fileName = _selectedFile.FileName;
+        var fileNameHash = MD5.HashData(Encoding.UTF8.GetBytes(fileName));
+        var fileNameHashString = string.Concat(fileNameHash.Select(b => b.ToString("x2")));
 
-        var entries = selectedFileArchive.Entries.OrderBy(e => ParsePageNumber(e.Name));
-        foreach (var entry in entries)
+        using var selectedFileStream = await _selectedFile.OpenReadAsync();
+        using var archive = await Compression.ZipArchive.LoadAsync(selectedFileStream);
+
+        var totalCount = archive.Entries.Count;
+        var sortedFileName = archive.Entries.Select(h => h.Filename).OrderBy(ParsePageNumber).ToList();
+        await foreach (var entry in archive.EnumerateAllAsync(cancellationToken))
         {
             cancellationToken.ThrowIfCancellationRequested();
             
-            using var entryStream = entry.Open();
-            var tempFilePath = Path.Combine(_tempDirectory, $"cache_{entry.FullName}");
+            var tempFilePath = Path.Combine(_tempDirectory, $"{fileNameHashString}_{entry.FileName}.tmp");
             using var fileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write,
                 FileShare.None, 4096, FileOptions.SequentialScan | FileOptions.Asynchronous);
 
-            await entryStream.CopyToAsync(fileStream, cancellationToken);
+            await entry.Content.CopyToAsync(fileStream, cancellationToken);
             await fileStream.FlushAsync(cancellationToken);
-            
-            _pages.Add(new GalleryPage(tempFilePath));
+
+            var index = sortedFileName.IndexOf(entry.FileName);
+            var item = ImageSource.FromFile(tempFilePath);
+            _pages.Insert(index, item);
         }
     }
 
@@ -78,14 +85,4 @@ public partial class GalleryViewPage : ContentPage
     private static partial Regex PageNumberRegex();
 }
 
-public class GalleryPage(string file)
-{
-    public string File => file;
-    public ImageSource ImageSource => new CustomFileImageSource(file);
-}
 
-public class CustomFileImageSource(string file) : ImageSource, IFileImageSource
-{
-    public string File => file;
-    public override bool IsEmpty => false;
-}

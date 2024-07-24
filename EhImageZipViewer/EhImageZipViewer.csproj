@@ -1,8 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net8.0-ios;net8.0-maccatalyst;net8.0-android34.0</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+        <TargetFrameworks>net8.0-maccatalyst;net8.0-android34.0;net8.0-ios</TargetFrameworks>
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
         <!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
 
@@ -19,6 +18,7 @@
         <SingleProject>true</SingleProject>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 
         <!-- Display name -->
         <ApplicationTitle>EhImageZipViewer</ApplicationTitle>
@@ -52,6 +52,10 @@
     <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows' and '$(RuntimeIdentifierOverride)' != ''">
         <RuntimeIdentifier>$(RuntimeIdentifierOverride)</RuntimeIdentifier>
     </PropertyGroup>
+
+    <PropertyGroup>
+      <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+    </PropertyGroup>
     
     <ItemGroup>
         <!-- App Icon -->
@@ -72,25 +76,57 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.21" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.21" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.70" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.70" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+        <PackageReference Include="System.IO.Pipelines" Version="8.0.0" />
     </ItemGroup>
 
     <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
-        <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.49-beta" />
+        <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.106" />
+    </ItemGroup>
+
+    <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+		
+    </ItemGroup>
+
+    <!-- Android -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net8.0-android')) != true">
+      <Compile Remove="**\*.Android.cs" />
+      <None Include="**\*.Android.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+    
+    <!-- iOS and Mac Catalyst -->
+    <ItemGroup Condition="$(TargetFramework.StartsWith('net8.0-ios')) != true AND $(TargetFramework.StartsWith('net8.0-maccatalyst')) != true">
+      <Compile Remove="**\*.MaciOS.cs" />
+      <None Include="**\*.MaciOS.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    </ItemGroup>
+    
+    <!-- Windows -->
+    <ItemGroup Condition="$(TargetFramework.Contains('-windows')) != true ">
+      <Compile Remove="**\*.Windows.cs" />
+      <None Include="**\*.Windows.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
     </ItemGroup>
 
     <ItemGroup>
       <MauiXaml Update="GalleryViewPage.xaml">
         <Generator>MSBuild:Compile</Generator>
       </MauiXaml>
+      <Compile Update="Compression\SR.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>SR.resx</DependentUpon>
+      </Compile>
       <Compile Update="GalleryViewPage.xaml.cs">
         <DependentUpon>GalleryViewPage.xaml</DependentUpon>
       </Compile>
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Update="Compression\SR.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>SR.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
       <EmbeddedResource Update="Resources\Strings\AppResources.resx">
         <Generator>ResXFileCodeGenerator</Generator>
         <LastGenOutput>AppResources.Designer.cs</LastGenOutput>

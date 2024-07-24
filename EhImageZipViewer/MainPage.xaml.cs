@@ -15,7 +15,7 @@ public partial class MainPage : ContentPage
         var pickResult = await PlatformFilePicker.PickAsync();
 #else
         var fileResult = await FilePicker.PickAsync(pickOptions);
-        var pickResult = new GenerateFileResult(fileResult);
+        var pickResult = fileResult != null ? new GenerateFileResult(fileResult) : null;
 #endif
         if (pickResult != null)
         {
@@ -28,6 +28,8 @@ public partial class MainPage : ContentPage
         {
             return await fileResult.OpenReadAsync();
         }
+
+        public override string FileName => fileResult.FileName;
     }
 
     private static readonly PickOptions pickOptions;

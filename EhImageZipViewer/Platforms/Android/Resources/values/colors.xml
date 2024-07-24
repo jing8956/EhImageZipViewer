@@ -6,4 +6,7 @@
 
   <color name="statusBarColor">#FFFFFF</color>
   <color name="navigationBarColor">#FFFFFF</color>
+
+  <color name="white">#FFFFFF</color>
+  <color name="black">#000000</color>
 </resources>
