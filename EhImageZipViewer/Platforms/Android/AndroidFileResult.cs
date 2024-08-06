@@ -6,21 +6,16 @@ public class AndroidFileResult(Android.Net.Uri uri) : PlatformFileResult
 {
     public override ValueTask<Stream> OpenReadAsync() => ValueTask.FromResult(OpenRead());
 
-    public Stream OpenRead()
-    {
-        var activity = (MainActivity)ActivityStateManager.Default.GetCurrentActivity()!;
-        return activity.ContentResolver!.OpenInputStream(uri)!;
-    }
+    public Stream OpenRead() => MainActivity.CurrentActivity.ContentResolver!.OpenInputStream(uri)!;
 
     public override string FileName
     {
         get
         {
-            var activity = (MainActivity)ActivityStateManager.Default.GetCurrentActivity()!;
             string? result = null;
             if (string.Equals(uri.Scheme, "content"))
             {
-                var cursor = activity.ContentResolver!.Query(uri, null, null, null, null);
+                var cursor = MainActivity.CurrentActivity.ContentResolver!.Query(uri, null, null, null, null);
                 try
                 {
                     if (cursor != null && cursor.MoveToFirst())
@@ -47,4 +42,6 @@ public class AndroidFileResult(Android.Net.Uri uri) : PlatformFileResult
             return result;
         }
     }
+
+    public string ContentType => MainActivity.CurrentActivity.ContentResolver!.GetType(uri)!;
 }

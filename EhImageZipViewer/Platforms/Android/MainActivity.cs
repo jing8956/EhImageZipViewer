@@ -14,6 +14,8 @@ namespace EhImageZipViewer
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
     public class MainActivity : MauiAppCompatActivity
     {
+        public static MainActivity CurrentActivity => (MainActivity)ActivityStateManager.Default.GetCurrentActivity()!;
+
         public FilePickerLifecycleObserver FilePickerLifecycleObserver { get; private set; } = null!;
 
         protected override void OnCreate(Bundle? savedInstanceState)

@@ -8,6 +8,13 @@
              Unloaded="ContentPage_Unloaded"
              Shell.NavBarIsVisible="false">
 
-    <localControls:GalleryView x:Name="MainView" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <localControls:GalleryView Grid.Row="1" x:Name="MainView" />
+        <Label x:Name="topLabel" Text="0 B/s"/>
+    </Grid>
 
 </ContentPage>

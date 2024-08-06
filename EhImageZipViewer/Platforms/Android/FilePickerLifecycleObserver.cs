@@ -21,7 +21,7 @@ public class FilePickerLifecycleObserver(ActivityResultRegistry registry) : Java
 
     private static readonly SemaphoreSlim _semaphore = new(1);
     private static TaskCompletionSource<Android.Net.Uri?>? _callbackSource;
-    public static async Task<Android.Net.Uri?> Launch(string mimeType)
+    public static async Task<Android.Net.Uri?> Launch(params string[] mimeTypes)
     {
         var activity = (MainActivity)ActivityStateManager.Default.GetCurrentActivity()!;
 
@@ -30,7 +30,7 @@ public class FilePickerLifecycleObserver(ActivityResultRegistry registry) : Java
         try
         {
             _callbackSource = new TaskCompletionSource<Android.Net.Uri?>();
-            activity.FilePickerLifecycleObserver.Launcher.Launch(mimeType);
+            activity.FilePickerLifecycleObserver.Launcher.Launch(mimeTypes);
             result = await _callbackSource.Task;
         }
         finally

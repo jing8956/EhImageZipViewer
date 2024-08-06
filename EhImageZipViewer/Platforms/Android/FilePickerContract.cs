@@ -1,6 +1,7 @@
 using Android.App;
 using Android.Content;
 using AndroidX.Activity.Result.Contract;
+using static Android.Icu.Text.TimeZoneFormat;
 
 namespace EhImageZipViewer;
 
@@ -11,7 +12,8 @@ public class FilePickerContract : ActivityResultContract
         var intent = new Intent(Intent.ActionOpenDocument);
         intent.AddCategory(Intent.CategoryOpenable);
         // intent.PutExtra(Intent.ExtraAllowMultiple, false);
-        intent.SetType((string?)input);
+        intent.PutExtra(Intent.ExtraMimeTypes, (string[])input!);
+        intent.SetType("*/*");
         intent.AddFlags(ActivityFlags.ExcludeFromRecents);
         return intent;
     }

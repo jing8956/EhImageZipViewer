@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
-using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using EhImageZipViewer.Compression;
 
 namespace EhImageZipViewer;
 
@@ -46,9 +46,10 @@ public partial class GalleryViewPage : ContentPage
 
         }
 
-        Directory.Delete(_tempDirectory, true);
         _pages.Clear();
+        Directory.Delete(_tempDirectory, true);
     }
+
 
     private async Task LoadPages(CancellationToken cancellationToken)
     {
@@ -57,24 +58,65 @@ public partial class GalleryViewPage : ContentPage
         var fileNameHashString = string.Concat(fileNameHash.Select(b => b.ToString("x2")));
 
         using var selectedFileStream = await _selectedFile.OpenReadAsync();
-        using var archive = await Compression.ZipArchive.LoadAsync(selectedFileStream);
 
-        var totalCount = archive.Entries.Count;
-        var sortedFileName = archive.Entries.Select(h => h.Filename).OrderBy(ParsePageNumber).ToList();
-        await foreach (var entry in archive.EnumerateAllAsync(cancellationToken))
+        var addedFiles = new List<string>();
+
+        var progress = new ReciveBytesProgress();
+        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        var metricsTask = CollectMetrics(progress, cts.Token);
+
+        try
         {
-            cancellationToken.ThrowIfCancellationRequested();
-            
-            var tempFilePath = Path.Combine(_tempDirectory, $"{fileNameHashString}_{entry.FileName}.tmp");
-            using var fileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write,
-                FileShare.None, 4096, FileOptions.SequentialScan | FileOptions.Asynchronous);
+            await foreach (var entry in ZipArchive.EnumerateAllAsync(selectedFileStream, progress, cancellationToken))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
 
-            await entry.Content.CopyToAsync(fileStream, cancellationToken);
-            await fileStream.FlushAsync(cancellationToken);
+                var tempFilePath = Path.Combine(_tempDirectory, $"{fileNameHashString}_{entry.FileName}.tmp");
+                using var fileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write,
+                    FileShare.None, 4096, FileOptions.SequentialScan | FileOptions.Asynchronous);
 
-            var index = sortedFileName.IndexOf(entry.FileName);
-            var item = ImageSource.FromFile(tempFilePath);
-            _pages.Insert(index, item);
+                await entry.Content.CopyToAsync(fileStream, cancellationToken);
+                await fileStream.FlushAsync(cancellationToken);
+
+                var searchFileName = ParsePageNumber(entry.FileName);
+                var item = ImageSource.FromFile(tempFilePath);
+
+                var index = addedFiles.FindLastIndex(n => string.CompareOrdinal(n, searchFileName) > 0);
+                if (index == -1) index = addedFiles.Count;
+
+                addedFiles.Insert(index, searchFileName);
+                _pages.Insert(index, item);
+            }
+        }
+        finally
+        {
+            topLabel.Text = "";
+            await cts.CancelAsync().ConfigureAwait(false);
+            await metricsTask.WaitAsync(cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    private class ReciveBytesProgress : IProgress<int>
+    {
+        private long _value;
+        public long Value => Interlocked.Read(ref _value);
+
+        public void Report(int value) => Interlocked.Add(ref _value, value);
+    }
+
+    private async Task CollectMetrics(ReciveBytesProgress progress, CancellationToken cancellationToken = default)
+    {
+        var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+        var lastValue = progress.Value;
+        while(await timer.WaitForNextTickAsync(cancellationToken))
+        {
+            var currValue = progress.Value;
+            var bytesRead = currValue - lastValue;
+            var currValueMB = double.Round(currValue / 1048576.0, 2);
+            var bytesReadMB = double.Round(bytesRead / 1048576.0, 2);
+            topLabel.Text = $"{currValueMB} MB, {bytesReadMB} MB/s, {bytesReadMB * 8} Mbps";
+
+            lastValue = currValue;
         }
     }
 

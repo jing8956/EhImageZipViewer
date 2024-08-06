@@ -7,7 +7,7 @@
     "Remote Machine": {
       "commandName": "MsixPackage",
       "remoteDebugEnabled": true,
-      "remoteDebugMachine": "192.168.2.149",
+      "remoteDebugMachine": "192.168.8.149",
       "authenticationMode": "Windows"
     }
   }

@@ -144,6 +144,9 @@
   <data name="IncompleteMessage" xml:space="preserve">
     <value>Incomplete message.</value>
   </data>
+  <data name="InvalidZipFileOrNotSupport" xml:space="preserve">
+    <value>Invalid zip file or not support.</value>
+  </data>
   <data name="LocalFileCorrupt" xml:space="preserve">
     <value>A local file is corrupt.</value>
   </data>

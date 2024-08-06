@@ -142,6 +142,15 @@ namespace EhImageZipViewer.Compression {
         }
         
         /// <summary>
+        ///   查找类似 Invalid zip file or not support. 的本地化字符串。
+        /// </summary>
+        internal static string InvalidZipFileOrNotSupport {
+            get {
+                return ResourceManager.GetString("InvalidZipFileOrNotSupport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 A local file is corrupt. 的本地化字符串。
         /// </summary>
         internal static string LocalFileCorrupt {
