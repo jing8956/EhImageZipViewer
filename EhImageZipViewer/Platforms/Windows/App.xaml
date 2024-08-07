@@ -1,8 +1,22 @@
-﻿<maui:MauiWinUIApplication
+<maui:MauiWinUIApplication
     x:Class="EhImageZipViewer.WinUI.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:maui="using:Microsoft.Maui"
     xmlns:local="using:EhImageZipViewer.WinUI">
+
+    <maui:MauiWinUIApplication.Resources>
+
+        <local:ImageSourceConverter x:Key="ImageSourceConverter" />
+
+        <DataTemplate x:Key="GalleryViewItemTemplate">
+            <Image Source="{Binding Converter={StaticResource ImageSourceConverter}}"/>
+        </DataTemplate>
+
+        <Style x:Key="GalleryViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="Padding" Value="0" />
+        </Style>
+        
+    </maui:MauiWinUIApplication.Resources>
 
 </maui:MauiWinUIApplication>

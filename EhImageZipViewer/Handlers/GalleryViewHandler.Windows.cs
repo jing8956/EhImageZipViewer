@@ -1,29 +1,16 @@
 using System.Collections.ObjectModel;
 using EhImageZipViewer.Controls;
+using EhImageZipViewer.WinUI;
 using Microsoft.Maui.Handlers;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
 
 namespace EhImageZipViewer.Handlers;
 
-public partial class GalleryViewHandler : ViewHandler<GalleryView, TextBlock>
+public partial class GalleryViewHandler : ViewHandler<GalleryView, MauiGalleryView>
 {
-    protected override TextBlock CreatePlatformView()
-    {
-        return new TextBlock();
-    }
+    protected override MauiGalleryView CreatePlatformView() => new(VirtualView);
 
     public static void MapImages(GalleryViewHandler handler, GalleryView view)
     {
-        if(view.Images != null && view.Images is ObservableCollection<ImageSource> source)
-        {
-            source.CollectionChanged += (sender, args) =>
-            {
-                handler.PlatformView.DispatcherQueue.TryEnqueue(() =>
-                {
-                    handler.PlatformView.Text = $"{source.Count}";
-                });
-            };
-        }
+        handler.PlatformView.UpdateImages();
     }
 }
