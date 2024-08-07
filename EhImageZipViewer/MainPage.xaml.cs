@@ -1,5 +1,3 @@
-using Microsoft.Maui.Controls;
-
 namespace EhImageZipViewer;
 
 public partial class MainPage : ContentPage
@@ -30,6 +28,7 @@ public partial class MainPage : ContentPage
         }
 
         public override string FileName => fileResult.FileName;
+        public override long FileLength => new FileInfo(fileResult.FullPath).Length;
     }
 
     private static readonly PickOptions pickOptions;

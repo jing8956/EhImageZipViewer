@@ -9,12 +9,8 @@
              Shell.NavBarIsVisible="false">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <localControls:GalleryView Grid.Row="1" x:Name="MainView" />
-        <Label x:Name="topLabel" Text="0 B/s"/>
+        <localControls:GalleryView x:Name="MainView" />
+        <Label x:Name="debugInfo" HorizontalOptions="End" VerticalOptions="End" Text=""/>
     </Grid>
 
 </ContentPage>

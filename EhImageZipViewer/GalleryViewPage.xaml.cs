@@ -56,6 +56,7 @@ public partial class GalleryViewPage : ContentPage
         var fileName = _selectedFile.FileName;
         var fileNameHash = MD5.HashData(Encoding.UTF8.GetBytes(fileName));
         var fileNameHashString = string.Concat(fileNameHash.Select(b => b.ToString("x2")));
+        var fileLength = _selectedFile.FileLength;
 
         using var selectedFileStream = await _selectedFile.OpenReadAsync();
 
@@ -63,7 +64,7 @@ public partial class GalleryViewPage : ContentPage
 
         var progress = new ReciveBytesProgress();
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        var metricsTask = CollectMetrics(progress, cts.Token);
+        var metricsTask = CollectMetrics(fileLength, progress, cts.Token);
 
         try
         {
@@ -91,7 +92,7 @@ public partial class GalleryViewPage : ContentPage
         }
         finally
         {
-            topLabel.Text = "";
+            debugInfo.IsVisible = false;
             await cts.CancelAsync().ConfigureAwait(false);
             await metricsTask.WaitAsync(cancellationToken).ConfigureAwait(false);
         }
@@ -105,17 +106,23 @@ public partial class GalleryViewPage : ContentPage
         public void Report(int value) => Interlocked.Add(ref _value, value);
     }
 
-    private async Task CollectMetrics(ReciveBytesProgress progress, CancellationToken cancellationToken = default)
+    private async Task CollectMetrics(long fileLength, ReciveBytesProgress progress, CancellationToken cancellationToken = default)
     {
+        const double bytesPerMB = 1024.0 * 1024.0;
+        var totalValueMB = double.Round(fileLength / bytesPerMB, 2);
         var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
         var lastValue = progress.Value;
+
         while(await timer.WaitForNextTickAsync(cancellationToken))
         {
+            
             var currValue = progress.Value;
             var bytesRead = currValue - lastValue;
-            var currValueMB = double.Round(currValue / 1048576.0, 2);
-            var bytesReadMB = double.Round(bytesRead / 1048576.0, 2);
-            topLabel.Text = $"{currValueMB} MB, {bytesReadMB} MB/s, {bytesReadMB * 8} Mbps";
+            var percent = double.Floor( currValue * 100.0 / fileLength);
+            var currValueMB = double.Round(currValue / bytesPerMB, 2);
+            var bytesReadMB = double.Round(bytesRead / bytesPerMB, 2);
+            var bytesReadMbps = bytesReadMB * 8;
+            debugInfo.Text = $"{percent}% ({currValueMB}/{totalValueMB} MB), {bytesReadMB} MB/s, {bytesReadMbps} Mbps";
 
             lastValue = currValue;
         }

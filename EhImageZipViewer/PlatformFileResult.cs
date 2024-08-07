@@ -4,4 +4,5 @@ public abstract class PlatformFileResult
 {
     public abstract ValueTask<Stream> OpenReadAsync();
     public abstract string FileName { get; }
+    public abstract long FileLength { get; }
 }

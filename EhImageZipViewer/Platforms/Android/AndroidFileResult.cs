@@ -2,46 +2,42 @@ using Android.Provider;
 
 namespace EhImageZipViewer;
 
-public class AndroidFileResult(Android.Net.Uri uri) : PlatformFileResult
+public class AndroidFileResult : PlatformFileResult
 {
-    public override ValueTask<Stream> OpenReadAsync() => ValueTask.FromResult(OpenRead());
+    private readonly Android.Net.Uri _uri;
 
-    public Stream OpenRead() => MainActivity.CurrentActivity.ContentResolver!.OpenInputStream(uri)!;
-
-    public override string FileName
+    public AndroidFileResult(Android.Net.Uri uri)
     {
-        get
+        _uri = uri;
+
+        if (string.Equals(_uri.Scheme, "content"))
         {
-            string? result = null;
-            if (string.Equals(uri.Scheme, "content"))
-            {
-                var cursor = MainActivity.CurrentActivity.ContentResolver!.Query(uri, null, null, null, null);
-                try
-                {
-                    if (cursor != null && cursor.MoveToFirst())
-                    {
-                        result = cursor.GetString(cursor.GetColumnIndex(IOpenableColumns.DisplayName));
-                    }
-                }
-                finally
-                {
-                    cursor?.Close();
-                }
-            }
-    
-            if (result == null)
-            {
-                result = uri.Path!;
-                int cut = result.LastIndexOf('/');
-                if (cut != -1)
-                {
-                    result = result[(cut + 1)..];
-                }
-            }
-    
-            return result;
+            var cursor = MainActivity.CurrentActivity.ContentResolver!.Query(_uri, null, null, null, null)!;
+
+            var nameIndex = cursor.GetColumnIndex(IOpenableColumns.DisplayName);
+            var sizeIndex = cursor.GetColumnIndex(IOpenableColumns.Size);
+            cursor.MoveToFirst();
+
+            FileName = cursor.GetString(nameIndex)!;
+            FileLength = cursor.GetLong(sizeIndex);
+
+            cursor.Close();
+        }
+        else
+        {
+            var file = new Java.IO.File(_uri.ToString()!);
+
+            FileName = file.Name;
+            FileLength = file.Length();
         }
     }
 
-    public string ContentType => MainActivity.CurrentActivity.ContentResolver!.GetType(uri)!;
+    public override ValueTask<Stream> OpenReadAsync() => ValueTask.FromResult(OpenRead());
+
+    public Stream OpenRead() => MainActivity.CurrentActivity.ContentResolver!.OpenInputStream(_uri)!;
+
+    public override string FileName { get; }
+    public override long FileLength { get; }
+
+    public string ContentType => MainActivity.CurrentActivity.ContentResolver!.GetType(_uri)!;
 }
