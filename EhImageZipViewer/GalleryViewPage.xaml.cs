@@ -9,7 +9,13 @@ namespace EhImageZipViewer;
 public partial class GalleryViewPage : ContentPage
 {
     private const string _tempDirectoryName = "24ef1515-3b32-4671-9983-e0dc15c03781";
-    private readonly string _tempDirectory = Path.Combine(Path.GetTempPath(), _tempDirectoryName);
+    private static readonly string _tempDirectory = Path.Combine(
+#if WINDOWS
+        Windows.Storage.ApplicationData.Current.TemporaryFolder.Path
+#else
+        Path.GetTempPath()
+#endif
+        , _tempDirectoryName);
     private readonly PlatformFileResult _selectedFile;
 
     public GalleryViewPage(PlatformFileResult selectedFile)
