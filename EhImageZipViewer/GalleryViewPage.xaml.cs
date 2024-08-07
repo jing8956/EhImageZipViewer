@@ -71,18 +71,19 @@ public partial class GalleryViewPage : ContentPage
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var tempFilePath = Path.Combine(_tempDirectory, $"{fileNameHashString}_{entry.FileName}.tmp");
+                var entryFileName = Path.GetFileName(entry.FileName);
+                var tempFilePath = Path.Combine(_tempDirectory, $"{fileNameHashString}_{entryFileName}.tmp");
                 using var fileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write,
                     FileShare.None, 4096, FileOptions.SequentialScan | FileOptions.Asynchronous);
 
                 await entry.Content.CopyToAsync(fileStream, cancellationToken);
                 await fileStream.FlushAsync(cancellationToken);
 
-                var searchFileName = ParsePageNumber(entry.FileName);
+                var searchFileName = ParsePageNumber(entryFileName);
                 var item = ImageSource.FromFile(tempFilePath);
 
-                var index = addedFiles.FindLastIndex(n => string.CompareOrdinal(n, searchFileName) > 0);
-                if (index == -1) index = addedFiles.Count;
+                var index = addedFiles.FindLastIndex(n => string.CompareOrdinal(n, searchFileName) < 0);
+                index++;
 
                 addedFiles.Insert(index, searchFileName);
                 _pages.Insert(index, item);

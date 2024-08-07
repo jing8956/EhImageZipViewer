@@ -31,6 +31,13 @@ public static class ZipArchive
                 {
                     var compressedSize = header.CompressedSize;
                     if (subBuffer.Length < compressedSize) break;
+                    if (compressedSize == 0)
+                    {
+                        buffer = subBuffer.Slice(compressedSize);
+                        subBuffer = buffer;
+                        break;
+                    }
+
                     var dataBlock = subBuffer.Slice(0, compressedSize);
 
                     var compressedStreamToRead = new ReadOnlySequenceStream(dataBlock);
