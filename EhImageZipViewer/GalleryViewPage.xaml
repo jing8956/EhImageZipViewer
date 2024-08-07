@@ -10,7 +10,8 @@
 
     <Grid>
         <localControls:GalleryView x:Name="MainView" />
-        <Label x:Name="debugInfo" HorizontalOptions="End" VerticalOptions="End" Text=""/>
+        <Label x:Name="debugInfo" HorizontalOptions="End" VerticalOptions="End"
+               BackgroundColor="{AppThemeBinding Dark=Black, Light=White}" Text=""/>
     </Grid>
 
 </ContentPage>
