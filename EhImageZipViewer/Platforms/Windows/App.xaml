@@ -16,7 +16,7 @@
         <Style x:Key="GalleryViewItemStyle" TargetType="ListViewItem">
             <Setter Property="Padding" Value="0" />
         </Style>
-        
+
     </maui:MauiWinUIApplication.Resources>
 
 </maui:MauiWinUIApplication>

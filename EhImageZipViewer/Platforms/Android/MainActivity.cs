@@ -6,6 +6,7 @@ using _Microsoft.Android.Resource.Designer;
 using Android.Views;
 using Android.OS;
 using AndroidX.Lifecycle;
+using Microsoft.Maui;
 
 namespace EhImageZipViewer
 {
@@ -29,16 +30,23 @@ namespace EhImageZipViewer
         {
             base.OnConfigurationChanged(newConfig);
 
-            var statusBarColor = ContextCompat.GetColor(this, ResourceConstant.Color.statusBarColor);
-            Window?.SetStatusBarColor(new Android.Graphics.Color(statusBarColor));
-
-            var navigationBarColor = ContextCompat.GetColor(this, ResourceConstant.Color.navigationBarColor);
-            Window?.SetNavigationBarColor(new Android.Graphics.Color(navigationBarColor));
-
-            var isNightMode = (newConfig.UiMode & UiMode.NightMask) == UiMode.NightYes;
-
-            if(OperatingSystem.IsAndroidVersionAtLeast(30))
+            if (OperatingSystem.IsAndroidVersionAtLeast(35))
             {
+                // TODO: Android 15
+            }
+            else
+            {
+                var statusBarColor = ContextCompat.GetColor(this, ResourceConstant.Color.statusBarColor);
+                Window?.SetStatusBarColor(new Android.Graphics.Color(statusBarColor));
+
+                var navigationBarColor = ContextCompat.GetColor(this, ResourceConstant.Color.navigationBarColor);
+                Window?.SetNavigationBarColor(new Android.Graphics.Color(navigationBarColor));
+            }
+
+            if (OperatingSystem.IsAndroidVersionAtLeast(30))
+            {
+                var isNightMode = (newConfig.UiMode & UiMode.NightMask) == UiMode.NightYes;
+
                 Window?.InsetsController?.SetSystemBarsAppearance(
                     isNightMode ? 0 : (int)WindowInsetsControllerAppearance.LightStatusBars,
                     (int)WindowInsetsControllerAppearance.LightStatusBars);

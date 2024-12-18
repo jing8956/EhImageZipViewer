@@ -1,15 +1,16 @@
 using System.Runtime.InteropServices;
 using Microsoft.Maui.Platform;
-using Windows.Storage;
 using Windows.ApplicationModel;
+using Windows.Storage.AccessCache;
+using Windows.Storage;
+using Windows.Win32;
 using Windows.Win32.UI.Shell;
 using Windows.Win32.UI.Shell.Common;
 using Windows.Win32.Foundation;
-using Windows.Storage.AccessCache;
 
 namespace EhImageZipViewer;
 
-public static class PlatformFilePicker
+internal static class PlatformFilePicker
 {
     public async static Task<PlatformFileResult?> PickAsync()
     {
@@ -17,18 +18,15 @@ public static class PlatformFilePicker
         if (filePath == null) return null;
 
         var storageFile = await StorageFile.GetFileFromPathAsync(filePath);
-        if(Package.Current != null) // AppInfoUtils.AppInfoUtils
-        {
-            StorageApplicationPermissions.FutureAccessList.Add(storageFile);
-        }
+        StorageApplicationPermissions.FutureAccessList.Add(storageFile);
 
         return new Win32FileResult(storageFile.Path);
     }
 
-    public unsafe static string? PickInternal()
+    private unsafe static string? PickInternal()
     {
         var currUI = System.Globalization.CultureInfo.CurrentUICulture;
-        Windows.Win32.PInvoke.SetThreadUILanguage((ushort)currUI.LCID);
+        PInvoke.SetThreadUILanguage((ushort)currUI.LCID);
 
         var dialog = (IFileOpenDialog)new FileOpenDialog();
 

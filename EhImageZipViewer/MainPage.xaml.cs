@@ -2,12 +2,14 @@ namespace EhImageZipViewer;
 
 public partial class MainPage : ContentPage
 {
-    public MainPage()
+    public MainPage(ISettingsService settings)
     {
         InitializeComponent();
+
+        _settings = settings;
     }
 
-    private async void OnCounterClicked(object sender, EventArgs e)
+    private async void OpenButton_Clicked(object sender, EventArgs e)
     {
 #if WINDOWS || ANDROID
         var pickResult = await PlatformFilePicker.PickAsync();
@@ -20,6 +22,7 @@ public partial class MainPage : ContentPage
             await Navigation.PushAsync(new GalleryViewPage(pickResult));
         }
     }
+
     private class GenerateFileResult(FileResult fileResult) : PlatformFileResult
     {
         public override async ValueTask<Stream> OpenReadAsync()
@@ -32,6 +35,8 @@ public partial class MainPage : ContentPage
     }
 
     private static readonly PickOptions pickOptions;
+    private readonly ISettingsService _settings;
+
     static MainPage()
     {
         var fileTypes = new Dictionary<DevicePlatform, IEnumerable<string>>()
@@ -46,3 +51,4 @@ public partial class MainPage : ContentPage
         };
     }
 }
+

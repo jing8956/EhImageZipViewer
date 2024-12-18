@@ -61,6 +61,33 @@ namespace EhImageZipViewer.Resources.Strings {
         }
         
         /// <summary>
+        ///   查找类似 主页 的本地化字符串。
+        /// </summary>
+        internal static string AppShell_HomeShellContent_Title {
+            get {
+                return ResourceManager.GetString("AppShell.HomeShellContent.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 EH 图片查看器 的本地化字符串。
+        /// </summary>
+        internal static string AppShell_Title {
+            get {
+                return ResourceManager.GetString("AppShell.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 欢迎使用 EH 图片查看器 的本地化字符串。
+        /// </summary>
+        internal static string HomePage_Headline {
+            get {
+                return ResourceManager.GetString("HomePage.Headline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 打开含有图片的 zip 压缩包 的本地化字符串。
         /// </summary>
         internal static string HomePage_OpenButton_Hint {
@@ -79,11 +106,29 @@ namespace EhImageZipViewer.Resources.Strings {
         }
         
         /// <summary>
+        ///   查找类似 添加文件夹（下次一定 的本地化字符串。
+        /// </summary>
+        internal static string HomePage_OpenDirButton_Text {
+            get {
+                return ResourceManager.GetString("HomePage.OpenDirButton.Text", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 点击按钮打开含有图片的 zip 压缩包 的本地化字符串。
         /// </summary>
         internal static string HomePage_SubHeadline {
             get {
                 return ResourceManager.GetString("HomePage.SubHeadline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 此应用可查看图片压缩包、浏览个人库。 的本地化字符串。
+        /// </summary>
+        internal static string HomePage_SubHeadline1 {
+            get {
+                return ResourceManager.GetString("HomePage.SubHeadline1", resourceCulture);
             }
         }
     }

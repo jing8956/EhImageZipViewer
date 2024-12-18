@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,13 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppShell.HomeShellContent.Title" xml:space="preserve">
+    <value>主页</value>
+  </data>
+  <data name="AppShell.Title" xml:space="preserve">
+    <value>EH 图片查看器</value>
+  </data>
+  <data name="HomePage.Headline" xml:space="preserve">
+    <value>欢迎使用 EH 图片查看器</value>
+  </data>
   <data name="HomePage.OpenButton.Hint" xml:space="preserve">
     <value>打开含有图片的 zip 压缩包</value>
   </data>
   <data name="HomePage.OpenButton.Text" xml:space="preserve">
     <value>打开</value>
   </data>
+  <data name="HomePage.OpenDirButton.Text" xml:space="preserve">
+    <value>添加文件夹（下次一定</value>
+  </data>
   <data name="HomePage.SubHeadline" xml:space="preserve">
     <value>点击按钮打开含有图片的 zip 压缩包</value>
+  </data>
+  <data name="HomePage.SubHeadline1" xml:space="preserve">
+    <value>此应用可查看图片压缩包、浏览个人库。</value>
   </data>
 </root>

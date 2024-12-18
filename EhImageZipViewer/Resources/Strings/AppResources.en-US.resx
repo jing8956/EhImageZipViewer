@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,13 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppShell.HomeShellContent.Title" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="AppShell.Title" xml:space="preserve">
+    <value>EH Image Zip Viewer</value>
+  </data>
+  <data name="HomePage.Headline" xml:space="preserve">
+    <value>Welcome to use EH Image Zip Viewer</value>
+  </data>
   <data name="HomePage.OpenButton.Hint" xml:space="preserve">
     <value>Open an image zip file</value>
   </data>
   <data name="HomePage.OpenButton.Text" xml:space="preserve">
-    <value>Open</value>
+    <value>Open File</value>
+  </data>
+  <data name="HomePage.OpenDirButton.Text" xml:space="preserve">
+    <value>Add Folder (Coming soon</value>
   </data>
   <data name="HomePage.SubHeadline" xml:space="preserve">
     <value>Click the button to open a image zip file.</value>
+  </data>
+  <data name="HomePage.SubHeadline1" xml:space="preserve">
+    <value />
   </data>
 </root>

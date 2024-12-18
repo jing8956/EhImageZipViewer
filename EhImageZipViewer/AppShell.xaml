@@ -4,12 +4,19 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:EhImageZipViewer"
-    Shell.FlyoutBehavior="Disabled"
-    Title="EhImageZipViewer">
+    xmlns:svg="clr-namespace:Jing8956.Maui.SvgImageSource;assembly=Jing8956.Maui.SvgImageSource"
+    xmlns:strings="clr-namespace:EhImageZipViewer.Resources.Strings"
+    Title="{x:Static strings:AppResources.AppShell_Title}">
+    <!--Shell.FlyoutBehavior="Locked"-->
 
     <ShellContent
-        Title="Home"
+        Title="{x:Static strings:AppResources.AppShell_HomeShellContent_Title}"
         ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Route="MainPage">
+        <ShellContent.Icon>
+            <!-- Icon="{AppThemeBinding Light=ionicons_home.png, Dark=ionicons_home_dark.png}" -->
+            <svg:SvgImageSource Path="ionicons/home.svg" />
+        </ShellContent.Icon>
+    </ShellContent>
 
 </Shell>

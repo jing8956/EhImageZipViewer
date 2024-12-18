@@ -3,9 +3,9 @@ root = true
 [*]
 charset = utf-8
 
-[*.{csproj,xml,yaml} ]
+[*.{csproj,xml,yaml}]
 indent_style = space
-indent_size = 2
+indent_size = 4
 
 [*.cs]
 #do not place System.* using directives before other using directives

@@ -1,6 +1,6 @@
-﻿namespace EhImageZipViewer.WinUI;
+namespace EhImageZipViewer.WinUI;
 
-public class ImageSourceConverter : Microsoft.UI.Xaml.Data.IValueConverter
+public partial class ImageSourceConverter : Microsoft.UI.Xaml.Data.IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
         => value switch

@@ -1,39 +1,24 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="EhImageZipViewer.MainPage"
+             xmlns:svg="clr-namespace:Jing8956.Maui.SvgImageSource;assembly=Jing8956.Maui.SvgImageSource"
              xmlns:strings="clr-namespace:EhImageZipViewer.Resources.Strings"
+             x:Class="EhImageZipViewer.MainPage"
              Shell.NavBarIsVisible="false">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Padding="30,25,30,0"
-            Spacing="25">
-            <Image
-                Source="logo.png"
-                HeightRequest="185"
-                Aspect="AspectFit"
-                SemanticProperties.Description="Logo" />
-
-            <Label
-                Text="EH Image Zip Viewer"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1"
-                SemanticProperties.Description="E H Image Zip Viewer"/>
-
-            <Label
-                Text="{x:Static strings:AppResources.HomePage_SubHeadline}"
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="{x:Static strings:AppResources.HomePage_SubHeadline}" />
-
-            <Button
-                x:Name="CounterBtn"
-                Text="{x:Static strings:AppResources.HomePage_OpenButton_Text}" 
-                SemanticProperties.Hint="{x:Static strings:AppResources.HomePage_OpenButton_Hint}"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Fill" />
-        </VerticalStackLayout>
-    </ScrollView>
+    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="4">
+        <Label Text="{x:Static strings:AppResources.HomePage_Headline}" Style="{StaticResource Headline}" />
+        <Label Text="{x:Static strings:AppResources.HomePage_SubHeadline}" />
+        <HorizontalStackLayout Spacing="4" MaximumHeightRequest="48">
+            <Button Text="{x:Static strings:AppResources.HomePage_OpenButton_Text}"
+                    SemanticProperties.Hint="{x:Static strings:AppResources.HomePage_OpenButton_Hint}"
+                    Clicked="OpenButton_Clicked">
+                <Button.ImageSource>
+                    <svg:SvgImageSource Path="ionicons/document-outline.svg" Color="White" />
+                </Button.ImageSource>
+            </Button>
+            <Button Text="{x:Static strings:AppResources.HomePage_OpenDirButton_Text}" IsEnabled="False" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
 
 </ContentPage>

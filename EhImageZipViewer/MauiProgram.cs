@@ -1,9 +1,9 @@
 using EhImageZipViewer.Controls;
 using EhImageZipViewer.Handlers;
+using Jing8956.Maui.SvgImageSource;
 using Microsoft.Extensions.Logging;
 
 namespace EhImageZipViewer;
-
 public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
@@ -18,8 +18,13 @@ public static class MauiProgram
             })
             .ConfigureMauiHandlers(handlers =>
             {
-                handlers.AddHandler(typeof(GalleryView), typeof(GalleryViewHandler));
+                handlers.AddHandler<GalleryView, GalleryViewHandler>();
             });
+
+        builder.AddSvgImageSource();
+
+        builder.Services.AddTransient(_ => Preferences.Default);
+        builder.Services.AddTransient<ISettingsService, SettingsSrvice>();
 
 #if DEBUG
         builder.Logging.AddDebug();
@@ -27,5 +32,4 @@ public static class MauiProgram
 
         return builder.Build();
     }
-
 }

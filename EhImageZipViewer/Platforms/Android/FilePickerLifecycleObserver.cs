@@ -1,5 +1,6 @@
 using AndroidX.Activity.Result;
 using AndroidX.Lifecycle;
+using Microsoft.Maui.ApplicationModel;
 
 namespace EhImageZipViewer;
 
