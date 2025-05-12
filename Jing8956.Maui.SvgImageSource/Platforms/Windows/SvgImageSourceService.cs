@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -35,8 +34,9 @@ public partial class SvgImageSourceService
 
         try
         {
-            var image = await GetLocal(filename, color, cancellationToken)
-                ?? await GetAppPackage(filename, color, cancellationToken)
+            // 首次安装启动会被取消，导致 svg 显示失败。
+            var image = await GetLocal(filename, color, CancellationToken.None)
+                ?? await GetAppPackage(filename, color, CancellationToken.None)
                 ?? throw new InvalidOperationException("Unable to load image file.");
 
             var result = new ImageSourceServiceResult(image);
@@ -66,6 +66,7 @@ public partial class SvgImageSourceService
 #else
         catch
         {
+
 #endif
         }
 
